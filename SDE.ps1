@@ -6,11 +6,11 @@ $rootfiledir = "D:\StockMarketData\"
 
 #Define Variable Set
 $database = "GlobalStockMarketDB"
-$sqlbulkloadtable = "Data.StockHistorical"
+$sqlbulkloadtable = "Data.StockHistoricalBulkLoad"
 $proc_start_time = Get-Date
-$oktoTruncateSQLTable = $False
+$oktoTruncateSQLTable = $True
 $connectionString = "Server=$dataSource;Database=$database;Integrated Security=True;"
-$stockdldfilepath = $rootfiledir + "Stock Files BackLoad\"
+$stockdldfilepath = $rootfiledir + "Stock Files 20200819\"
 $batchsize = 100000
 $elapsed = [System.Diagnostics.Stopwatch]::StartNew()
 $firstRowColumnNames = $true
@@ -82,8 +82,8 @@ if ($oktoTruncateSQLTable -eq $true)
 }
 
 
-
-$query = "Select StockID, StockTicker from [Ref].[Stock] where StockCountry = 'USA' and IsStockActive = 1  order by StockID asc"
+#$query = "Select stockID, StockTicker from [Ref].[Stock] where StockCountry = 'USA' and IsStockActive = 1 and StockID = '14653' order by StockID asc" #MSFT Test
+$query = "Select stockID, StockTicker from [Ref].[Stock] where StockCountry = 'USA' and IsStockActive = 1 order by StockID asc"
 
 $query | Out-File -FilePath "$RunLogOutputFile" -Append #Log the Query 
 
@@ -119,10 +119,10 @@ $table | ForEach-Object {
 	
 	$CurrentStockFilePath = $stockdldfilepath + $CurrentStockID + ".csv"
 	
-	#Old Yahoo URL
+	#Old Yahoo URL       
 	#$CurrentStockURL = "http://chart.finance.yahoo.com/table.csv?s=" + $CurrentStockTicker + "&a=0&b=1&c=1950&d=11&e=31&f=2025&g=d&ignore=.csv"
 	#$CurrentStockURL = "https://www.google.com/finance/historical?output=csv&q=" + $CurrentStockTicker
-	$CurrentStockURL = "https://query1.finance.yahoo.com/v7/finance/download/" + $CurrentStockTicker + "?period1=511056000&period2=1597733311&interval=1d&events=history"
+	$CurrentStockURL = "https://query1.finance.yahoo.com/v7/finance/download/" + $CurrentStockTicker + "?period1=1597363200&period2=1597795200&interval=1d&events=history"
 	"Current Stock URL - " + $CurrentStockURL | Out-File -FilePath "$RunLogOutputFile" -Append
 	"Current Stock File - " + $CurrentStockFilePath | Out-File -FilePath "$RunLogOutputFile" -Append
 	
